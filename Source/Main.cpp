@@ -26,6 +26,7 @@ glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 direction;
 
+bool cameraFly = false;
 bool firstMouse = true;
 float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 float pitch = 0.0f;
@@ -344,11 +345,11 @@ void processInput(GLFWwindow* window)
 		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
 	{
-		cameraPos.x = 1.0f;
-		cameraPos.z = -1.0f;
+		cameraFly = !cameraFly;
 	}
+	if(!cameraFly)
 	cameraPos.y = 0.5f;
 	
 }
