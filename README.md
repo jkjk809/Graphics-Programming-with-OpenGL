@@ -21,6 +21,7 @@ Currently working on abstracting OpenGL to make it easier to work with.
 - Press M to view wireframes.
 - Switch to Linear sampling with L.
 - Switch to Nearest sampling with N.
+- F to enter camera fly mode.
 
 ## Feedback
 Feedback is appreciated but I am not accepting commits. Thank you!
