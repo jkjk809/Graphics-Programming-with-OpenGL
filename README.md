@@ -7,8 +7,7 @@ This project documents my journey with OpenGL and graphics programming
 Currently working on abstracting OpenGL to make it easier to work with.
 Also trying to understand vertex array objects.
 ## Current state of project
-![firstGame](https://github.com/jkjk809/Learning-OpenGL/assets/157747331/65e81023-368e-49dc-b0dc-2f8992bb53f4)
-
+![projectState](https://github.com/jkjk809/Graphics-Programming-with-OpenGL/assets/157747331/94c99802-1972-4feb-8718-55e6a15e37bb)
 ## Technologies used:
 - OpenGL: Graphics rendering.
 - GLFW: Window and input managemnet.
