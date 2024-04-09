@@ -9,6 +9,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -136,21 +138,15 @@ int main()
 	   -0.5f,  0.5f, 0.0f,    0.0f, 100.0f
 	};
 
-	GLuint VAO, planeVBO, cubeVBO;
+	GLuint VAO;
 	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &planeVBO);
-	glGenBuffers(1, &cubeVBO);
-
 	glBindVertexArray(VAO);
 
-
-	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-
+	VertexBuffer cubeVB(vertices, sizeof(vertices));
+	VertexBuffer planeVB(planeVertices, sizeof(planeVertices));
+	
+	
+	// Textures
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -173,6 +169,7 @@ int main()
 
 	stbi_image_free(data);
 
+	//Texture 2
 	glGenTextures(1, &grassTexture);
 	glBindTexture(GL_TEXTURE_2D, grassTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -206,15 +203,10 @@ int main()
 	
 	glEnable(GL_DEPTH_TEST);
 
-	
-
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	while (!glfwWindowShouldClose(window))
 	{
-		glBindVertexArray(VAO);
-		
-
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -234,8 +226,8 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		firstShader.use();
-
-		glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+		
+		cubeVB.Bind();
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(2);
@@ -256,19 +248,11 @@ int main()
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		firstShader.setMat4("model", model);
 		
-		// draw cube
-		
-
-		// calculate the model matrix for each object and pass it to shader before drawing
-		
-
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
-		//glBindVertexArray(VAO);
-		// Set model matrix for plane
-
+		
+		planeVB.Bind();
 		glBindTexture(GL_TEXTURE_2D, grassTexture);
-		glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(2);
@@ -282,7 +266,7 @@ int main()
 		firstShader.setMat4("model", planeModel);
 		firstShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
 		firstShader.setMat4("view", view);
-
+		
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glfwSwapBuffers(window);
