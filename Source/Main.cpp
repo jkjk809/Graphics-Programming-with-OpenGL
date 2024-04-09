@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Camera.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
@@ -23,18 +24,11 @@ auto lastToggleTime = std::chrono::steady_clock::now();
 float deltaTime = 0.0f;	
 float lastFrame = 0.0f; 
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 direction;
-
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 bool cameraFly = false;
 bool firstMouse = true;
-float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch = 0.0f;
 float lastX = 800.0f / 2.0;
 float lastY = 600.0 / 2.0;
-float fov = 45.0f;
 
 GLuint texture;
 GLuint grassTexture;
@@ -200,7 +194,12 @@ int main()
 	//	1, 4, 2
 	//};
 	//GLuint EBO;
-	
+
+	firstShader.use();
+	glm::mat4 projection = glm::mat4(1.0f);
+	projection = glm::perspective(glm::radians(70.0f), static_cast<float>(screenWidth) / static_cast<float> (screenHeight), 0.1f, 100.0f);
+	firstShader.setMat4("projection", projection);
+
 	glEnable(GL_DEPTH_TEST);
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -220,6 +219,7 @@ int main()
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Filled mode
 		}
+
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -234,13 +234,11 @@ int main()
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
 		// create transformations
-		glm::mat4 view;
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
-		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(70.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		//glm::mat4 projection = glm::mat4(1.0f);
+	//	projection = glm::perspective(glm::radians(70.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 		// pass transformation matrices to the shader
-		firstShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+		//firstShader.setMat4("projection", projection);
 		firstShader.setMat4("view", view);
 
 		glm::mat4 model = glm::mat4(1.0f);
@@ -264,7 +262,7 @@ int main()
 		planeModel = glm::scale(planeModel, glm::vec3(100.0f, 100.0f, 100.0f));
 		 // Translate to desired position
 		firstShader.setMat4("model", planeModel);
-		firstShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+		firstShader.setMat4("projection", projection); 
 		firstShader.setMat4("view", view);
 		
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -322,19 +320,19 @@ void processInput(GLFWwindow* window)
 	}
 	const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraSpeed * cameraFront;
+		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraSpeed * cameraFront;
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		camera.ProcessKeyboard(RIGHT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
 	{
-		cameraFly = !cameraFly;
+		cameraFly= !cameraFly;
 	}
 	if(!cameraFly)
-	cameraPos.y = 0.5f;
+	camera.Position.y = 0.5f;
 	
 }
 
@@ -352,21 +350,5 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	float sensitivity = 0.1f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
+	camera.ProcessMouseMovement(xoffset, yoffset);
 }

@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header Files\Shader.h" />
+    <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
   </ItemGroup>
