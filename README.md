@@ -4,10 +4,9 @@
 This project documents my journey with OpenGL and graphics programming
 
 ## Project status
-Currently working on abstracting OpenGL to make it easier to work with.
-Also trying to understand vertex array objects.
+Lighting and renderer abstraction.
 ## Current state of project
-![projectState](https://github.com/jkjk809/Graphics-Programming-with-OpenGL/assets/157747331/94c99802-1972-4feb-8718-55e6a15e37bb)
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/3bm_NPNFyZs/0.jpg)](https://www.youtube.com/watch?v=3bm_NPNFyZs)
 ## Technologies used:
 - OpenGL: Graphics rendering.
 - GLFW: Window and input managemnet.
