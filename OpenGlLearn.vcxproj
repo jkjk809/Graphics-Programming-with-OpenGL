@@ -159,6 +159,8 @@
   <ItemGroup>
     <Image Include="Recources\textures\container2.png" />
     <Image Include="Recources\textures\container2_specular.png" />
+    <Image Include="Recources\textures\dither.jpg" />
+    <Image Include="Recources\textures\grass.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -59,5 +59,11 @@
     <Image Include="Recources\textures\container2.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Recources\textures\grass.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Recources\textures\dither.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

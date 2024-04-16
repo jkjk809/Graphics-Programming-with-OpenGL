@@ -45,7 +45,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-
+	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
 	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
@@ -68,7 +68,7 @@ int main()
 	int screenWidth, screenHeight;
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);
-
+	glfwSwapInterval(1);
 	//glViewport(0, 0, 800, 600);
 
 	Shader firstShader("Recources\\shader.vert", "Recources\\shader.frag");
@@ -135,6 +135,17 @@ int main()
 		-1.0f,  1.0f,  0.0f, 1.0f
 	};
 
+	float ground[] = {
+		// Positions          // Texture Coords // normals
+		-10.0f,  -0.5f, -10.0f,    0.0f, 10.0f,  0.0f, 1.0f, 0.0f,
+		-10.0f, -0.5f, 10.0f,     0.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+	     10.0f, -0.5f, 10.0f,    10.0f, 0.0f,    0.0f, 1.0f, 0.0f,
+
+		-10.0f,  -0.5f, -10.0f,    0.0f, 10.0f,    0.0f, 1.0f, 0.0f,
+	    10.0f, -0.5f, -10.0f,    10.0f, 10.0f,    0.0f, 1.0f, 0.0f,
+	     10.0f,  -0.5f, 10.0f,    10.0f, 0.0f,    0.0f, 1.0f, 0.0f
+	};
+
 	unsigned int rectVAO, rectVBO;
 	glGenVertexArrays(1, &rectVAO);
 	glGenBuffers(1, &rectVBO);
@@ -177,8 +188,23 @@ int main()
 	glEnableVertexAttribArray(0);
 
 	
+	// creation of ground
+	unsigned int groundVAO, groundVBO;
+	glGenVertexArrays(1, &groundVAO);
+	glGenBuffers(1, &groundVBO);
 
+	glBindBuffer(GL_ARRAY_BUFFER, groundVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(ground), ground, GL_STATIC_DRAW);
+	glBindVertexArray(groundVAO);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 	
+
 
 	glm::mat4 projection = glm::mat4(1.0f);
 	projection = glm::perspective(glm::radians(70.0f), static_cast<float>(screenWidth) / static_cast<float> (screenHeight), 0.1f, 100.0f);
@@ -191,8 +217,8 @@ int main()
 
 	firstShader.use();
 
-	firstShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-	firstShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
+	firstShader.setVec3("light.ambient", 0.07f, 0.07f, 0.07f);
+	firstShader.setVec3("light.diffuse", 1.5f, 1.5f, 1.5f); // darken diffuse light a bit
 	firstShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 	firstShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
@@ -201,16 +227,19 @@ int main()
 	firstShader.setVec3("lightPos", lightPos);
 	firstShader.setMat4("projection", projection);
 	firstShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-	firstShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+	firstShader.setVec3("lightColor", 0.5f, 0.0f, 0.0f);
 
 	unsigned int diffuseMap = loadTexture("Recources/textures/container2.png");
 	unsigned int specularMap = loadTexture("Recources/textures/container2_specular.png");
+	
 	firstShader.setInt("material.diffuse", 0);
 	firstShader.setInt("material.specular", 1);
 	pixelationShader.use();
 	pixelationShader.setInt("screenTexture", 0);
 	
-
+	unsigned int dither = loadTexture("Recources/textures/dither.jpg");
+	unsigned int grass = loadTexture("Recources/textures/grass.jpg");
+	
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	GLuint framebuffer;
@@ -255,12 +284,15 @@ int main()
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 		glViewport(0, 0, screenWidth, screenHeight);
 
 		firstShader.use();
+		firstShader.setBool("enableSpecular", true);
+		firstShader.setBool("lighting", cameraFly);
+		firstShader.setInt("material.diffuse", 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 		glActiveTexture(GL_TEXTURE1);
@@ -280,7 +312,7 @@ int main()
 		
 
 		lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
-		lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
+		//lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
 		firstShader.setVec3("lightPos", lightPos);
 
 		model = glm::mat4(1.0f);
@@ -295,6 +327,20 @@ int main()
 		glBindVertexArray(lightCubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
+		firstShader.use();
+
+		firstShader.setBool("enableSpecular", false);
+		model = glm::mat4(1.0f);
+		firstShader.setMat4("model", model);
+		glBindVertexArray(groundVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, grass);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, screenWidth, screenHeight);
 		glClearColor(0.6f, 0.5f, 0.4f, 1.0f);
@@ -306,6 +352,9 @@ int main()
 		glDisable(GL_DEPTH_TEST);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, dither);
+		pixelationShader.setInt("ditheeText", 1);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
@@ -335,24 +384,25 @@ void processInput(GLFWwindow* window)
 		auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastToggleTime).count();
 		if (elapsedTime > 200) // Cooldown period: 200 milliseconds
 		{
-			wireFrameMode = !wireFrameMode;
+			cameraFly = !cameraFly;
 			lastToggleTime = currentTime;
 		}
 	}
-	const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
+	const float cameraSpeed = 0.5f * deltaTime; // adjust accordingly
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
+		camera.ProcessKeyboard(FORWARD, cameraSpeed);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
+		camera.ProcessKeyboard(BACKWARD, cameraSpeed);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
+		camera.ProcessKeyboard(LEFT, cameraSpeed);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+		camera.ProcessKeyboard(RIGHT, cameraSpeed);
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
 	{
 		cameraFly= !cameraFly;
+		
 	}
-	if(!cameraFly)
+	if(true)
 	camera.Position.y = 0.5f;
 	
 }
@@ -397,7 +447,7 @@ unsigned int loadTexture(char const* path)
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		stbi_image_free(data);
