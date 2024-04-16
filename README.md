@@ -14,12 +14,5 @@ Lighting and renderer abstraction.
 - STB Image: Image loading.
 - GLM: Math Library.
 
-## Controls
-- You can move with W,A,S,D and look with mouse.
-- Press M to view wireframes.
-- Switch to Linear sampling with L.
-- Switch to Nearest sampling with N.
-- F to enter camera fly mode.
-
 ## Feedback
 Feedback is appreciated but I am not accepting commits. Thank you!
