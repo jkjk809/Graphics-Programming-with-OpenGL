@@ -146,11 +146,19 @@
     <ClInclude Include="Header Files\Shader.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
+    <ClInclude Include="Source\stb_image.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Recources\light.frag" />
+    <None Include="Recources\pixelation.frag" />
+    <None Include="Recources\pixelation.vert" />
     <None Include="Recources\shader.frag" />
     <None Include="Recources\shader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Recources\textures\container2.png" />
+    <Image Include="Recources\textures\container2_specular.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

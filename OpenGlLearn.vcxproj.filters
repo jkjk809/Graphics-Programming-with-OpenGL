@@ -24,6 +24,9 @@
     <ClCompile Include="Source\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\IndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header Files\Shader.h">
@@ -32,9 +35,29 @@
     <ClInclude Include="Source\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\IndexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Recources\shader.vert" />
     <None Include="Recources\shader.frag" />
+    <None Include="Recources\light.frag" />
+    <None Include="Recources\pixelation.vert" />
+    <None Include="Recources\pixelation.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Recources\textures\container2_specular.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Recources\textures\container2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
