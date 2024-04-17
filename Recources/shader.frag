@@ -33,7 +33,7 @@ uniform Material material;
 uniform bool lighting;
 void main()
 {
- 
+// vec2 correctedTexCoord = TexCoords + vec2(FragPos.x * Depth, FragPos.y * Depth);
    
    if(lighting){
     vec3 norm = normalize(Normal);

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\io">
+      <UniqueIdentifier>{056e35d7-5972-4eea-a766-edf3c06f79bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\glad.c">
@@ -26,6 +29,15 @@
     </ClCompile>
     <ClCompile Include="Source\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\io\Screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\io\Keyboard.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\io\Mouse.cpp">
+      <Filter>Source Files\io</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -43,6 +55,15 @@
     </ClInclude>
     <ClInclude Include="Source\stb_image.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\io\Screen.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\io\Keyboard.h">
+      <Filter>Source Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\io\Mouse.h">
+      <Filter>Source Files\io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

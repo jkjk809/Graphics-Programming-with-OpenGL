@@ -9,6 +9,7 @@ uniform mat4 projection;
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;
+
 void main()
 {
 // multiplication is done  right to left.
