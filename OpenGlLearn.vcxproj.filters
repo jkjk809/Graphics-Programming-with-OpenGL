@@ -42,6 +42,12 @@
     <ClCompile Include="Source\graphics\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\graphics\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\graphics\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\graphics\Shader.h">
@@ -69,6 +75,15 @@
       <Filter>Source Files\io</Filter>
     </ClInclude>
     <ClInclude Include="Source\graphics\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\graphics\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\graphics\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\graphics\models\Cube.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
