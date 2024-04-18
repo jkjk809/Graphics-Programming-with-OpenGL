@@ -105,8 +105,8 @@ void main()
     //ditheredColor = vec3(1.0, 0.0, 0.0);
     vec3 ditheredPattern = dither8x8(gl_FragCoord.xy, ditheredColor);
     vec3 finalColor = mix(ditheredColor, ditheredPattern, 0.5);
-    float darkeningFactor = 0.7;
-    finalColor *= darkeningFactor;
+    //float darkeningFactor = 0.7;
+   // finalColor *= darkeningFactor;
  
     //  FragColor = vec4(dither8x8(gl_FragCoord.xy, pixelatedColor.rgb), 1.0);
     FragColor = vec4(finalColor, 1.0);
