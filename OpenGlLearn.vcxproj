@@ -137,6 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\graphics\Mesh.cpp" />
+    <ClCompile Include="Source\graphics\Model.cpp" />
     <ClCompile Include="Source\graphics\Texture.cpp" />
     <ClCompile Include="Source\io\Keyboard.cpp" />
     <ClCompile Include="Source\io\Mouse.cpp" />
@@ -147,6 +149,9 @@
     <ClCompile Include="Source\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\graphics\Mesh.h" />
+    <ClInclude Include="Source\graphics\Model.h" />
+    <ClInclude Include="Source\graphics\models\Cube.hpp" />
     <ClInclude Include="Source\graphics\Shader.h" />
     <ClInclude Include="Source\graphics\Texture.h" />
     <ClInclude Include="Source\io\Keyboard.h" />

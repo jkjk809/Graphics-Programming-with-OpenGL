@@ -18,6 +18,8 @@
 #include "io/Camera.h"
 #include "graphics/Texture.h"
 
+#include "graphics/models/Cube.hpp"
+
 unsigned int loadTexture(char const* path);
 void processInput();
 
@@ -33,7 +35,7 @@ Mouse mouse(&camera);
 
 bool setLighting = true;
 
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos(1.2f, 1.0f, 1.0f);
 
 int main()
 {
@@ -66,6 +68,10 @@ int main()
 	Shader lightShader("Recources\\shader.vert", "Recources\\light.frag");
 	Shader pixelationShader("Recources\\pixelation.vert", "Recources\\pixelation.frag");
 
+	Cube cube(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+	cube.init();
+	Cube lightCube(lightPos, glm::vec3(0.1f));
+	lightCube.init();
 	//Verticers for our cube.
 	float vertices[] = {
 		// positions          // normals           // texture coords
@@ -149,6 +155,7 @@ int main()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	// cube
 	unsigned int VBO, cubeVAO;
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &VBO);
@@ -203,7 +210,7 @@ int main()
 	objectShader.setMat4("projection", projection);
 
 	objectShader.setVec3("light.ambient", 0.07f, 0.07f, 0.07f);
-	objectShader.setVec3("light.diffuse", 1.5f, 1.5f, 1.5f); // darken diffuse light a bit
+	objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
 	objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 	objectShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
@@ -213,15 +220,9 @@ int main()
 	objectShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 	objectShader.setVec3("lightColor", 0.5f, 0.0f, 0.0f);
 
-	Texture diffuseMap("Recources/textures/container2.png", "diffuseMap");
-	diffuseMap.load();
-	Texture specularMap("Recources/textures/container2_specular.png", "specularMap");
-	specularMap.load();
+
 	Texture grassTexture("Recources/textures/grass.jpg", "grassTexture");
 	grassTexture.load();
-
-	objectShader.setInt("material.diffuse", diffuseMap.id);
-	objectShader.setInt("material.specular", specularMap.id);
 
 	pixelationShader.use();
 	pixelationShader.setInt("screenTexture", 0);
@@ -264,46 +265,33 @@ int main()
 		
 		
 		objectShader.use();
+		glm::mat4 view = camera.GetViewMatrix();
 		objectShader.setBool("enableSpecular", true);
 		objectShader.setBool("lighting", setLighting);
-		objectShader.setInt("material.diffuse", 0);
-
-		glActiveTexture(GL_TEXTURE0);
-		diffuseMap.bind();
-		glActiveTexture(GL_TEXTURE1);
-		specularMap.bind();
-
 		objectShader.setVec3("viewPos", camera.Position);
-		glm::mat4 view = camera.GetViewMatrix();
-	
 		objectShader.setMat4("view", view);
+		//cube drawing
 
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -0.25f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		objectShader.setMat4("model", model);
-		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		cube.render(objectShader);
 		
 		lightPos.x = 1.0f + sin(static_cast<float> (glfwGetTime())) * 2.0f;
-
+		lightCube.pos = lightPos;
+		std::cout << lightCube.pos.x << " " << lightPos.x << std::endl;
 		objectShader.setVec3("lightPos", lightPos);
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.2f));
+		
 		
 		lightShader.use();
 		lightShader.setMat4("view", view);
-		lightShader.setMat4("model", model);
+		lightCube.render(lightShader);
 
-		glBindVertexArray(lightCubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//glBindVertexArray(lightCubeVAO);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
 		
 		objectShader.use();
 
 		objectShader.setBool("enableSpecular", false);
-		model = glm::mat4(1.0f);
+		glm::mat4 model = glm::mat4(1.0f);
 		objectShader.setMat4("model", model);
 		glBindVertexArray(groundVAO);
 		glActiveTexture(GL_TEXTURE0);
