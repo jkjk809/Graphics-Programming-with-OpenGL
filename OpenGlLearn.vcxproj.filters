@@ -39,21 +39,24 @@
     <ClCompile Include="Source\io\Mouse.cpp">
       <Filter>Source Files\io</Filter>
     </ClCompile>
+    <ClCompile Include="Source\graphics\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header Files\Shader.h">
+    <ClInclude Include="Source\graphics\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Camera.h">
+    <ClInclude Include="Source\io\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\stb_image.h">
+    <ClInclude Include="Source\graphics\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\io\Screen.h">
@@ -64,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="Source\io\Mouse.h">
       <Filter>Source Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\graphics\Texture.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

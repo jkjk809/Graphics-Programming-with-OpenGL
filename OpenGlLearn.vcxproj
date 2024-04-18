@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\graphics\Texture.cpp" />
     <ClCompile Include="Source\io\Keyboard.cpp" />
     <ClCompile Include="Source\io\Mouse.cpp" />
     <ClCompile Include="Source\io\Screen.cpp" />
@@ -146,13 +147,14 @@
     <ClCompile Include="Source\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header Files\Shader.h" />
+    <ClInclude Include="Source\graphics\Shader.h" />
+    <ClInclude Include="Source\graphics\Texture.h" />
     <ClInclude Include="Source\io\Keyboard.h" />
     <ClInclude Include="Source\io\Mouse.h" />
     <ClInclude Include="Source\io\Screen.h" />
-    <ClInclude Include="Source\Camera.h" />
+    <ClInclude Include="Source\io\Camera.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
-    <ClInclude Include="Source\stb_image.h" />
+    <ClInclude Include="Source\graphics\stb_image.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>

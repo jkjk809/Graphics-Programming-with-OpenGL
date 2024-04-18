@@ -2,19 +2,21 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include <chrono>
-#include "..\Header Files\Shader.h"
+
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Camera.h"
+#include "graphics/Shader.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "io/Mouse.h"
 #include "io/Keyboard.h"
 #include "io/Screen.h"
+#include "io/Camera.h"
+#include "graphics/Texture.h"
 
 unsigned int loadTexture(char const* path);
 void processInput();
@@ -27,14 +29,9 @@ float lastFrame = 0.0f;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 Screen screen;
-Keyboard keyboard;
 Mouse mouse(&camera);
 
-bool cameraFly = true;
-bool firstMouse = true;
-
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
+bool setLighting = true;
 
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
@@ -63,8 +60,9 @@ int main()
 	}
 	
 	screen.setParameters();
+	
 
-	Shader firstShader("Recources\\shader.vert", "Recources\\shader.frag");
+	Shader objectShader("Recources\\shader.vert", "Recources\\shader.frag");
 	Shader lightShader("Recources\\shader.vert", "Recources\\light.frag");
 	Shader pixelationShader("Recources\\pixelation.vert", "Recources\\pixelation.frag");
 
@@ -201,30 +199,32 @@ int main()
 	lightShader.use();
 	lightShader.setMat4("projection", projection);
 
-	firstShader.use();
+	objectShader.use();
+	objectShader.setMat4("projection", projection);
 
-	firstShader.setVec3("light.ambient", 0.07f, 0.07f, 0.07f);
-	firstShader.setVec3("light.diffuse", 1.5f, 1.5f, 1.5f); // darken diffuse light a bit
-	firstShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+	objectShader.setVec3("light.ambient", 0.07f, 0.07f, 0.07f);
+	objectShader.setVec3("light.diffuse", 1.5f, 1.5f, 1.5f); // darken diffuse light a bit
+	objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
-	firstShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-	firstShader.setFloat("material.shininess", 32.0f);
+	objectShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+	objectShader.setFloat("material.shininess", 32.0f);
 
-	firstShader.setVec3("lightPos", lightPos);
-	firstShader.setMat4("projection", projection);
-	firstShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-	firstShader.setVec3("lightColor", 0.5f, 0.0f, 0.0f);
+	objectShader.setVec3("lightPos", lightPos);
+	objectShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+	objectShader.setVec3("lightColor", 0.5f, 0.0f, 0.0f);
 
-	unsigned int diffuseMap = loadTexture("Recources/textures/container2.png");
-	unsigned int specularMap = loadTexture("Recources/textures/container2_specular.png");
-	
-	firstShader.setInt("material.diffuse", 0);
-	firstShader.setInt("material.specular", 1);
+	Texture diffuseMap("Recources/textures/container2.png", "diffuseMap");
+	diffuseMap.load();
+	Texture specularMap("Recources/textures/container2_specular.png", "specularMap");
+	specularMap.load();
+	Texture grassTexture("Recources/textures/grass.jpg", "grassTexture");
+	grassTexture.load();
+
+	objectShader.setInt("material.diffuse", diffuseMap.id);
+	objectShader.setInt("material.specular", specularMap.id);
+
 	pixelationShader.use();
 	pixelationShader.setInt("screenTexture", 0);
-	
-	unsigned int dither = loadTexture("Recources/textures/dither.jpg");
-	unsigned int grass = loadTexture("Recources/textures/grass.jpg");
 	
 	GLuint framebuffer;
 	glGenFramebuffers(1, &framebuffer);
@@ -250,42 +250,44 @@ int main()
 	
 	while (!screen.shouldClose())
 	{
-	
+		
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
 		processInput();
-		
+		glEnable(GL_DEPTH_TEST);
+
 		glViewport(0, 0, screen.SCR_WIDTH, screen.SCR_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		screen.update();
-		glEnable(GL_DEPTH_TEST);
 		
-		firstShader.use();
-		firstShader.setBool("enableSpecular", true);
-		firstShader.setBool("lighting", cameraFly);
-		firstShader.setInt("material.diffuse", 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap);
+		
+		objectShader.use();
+		objectShader.setBool("enableSpecular", true);
+		objectShader.setBool("lighting", setLighting);
+		objectShader.setInt("material.diffuse", 0);
 
-		firstShader.setVec3("viewPos", camera.Position);
+		glActiveTexture(GL_TEXTURE0);
+		diffuseMap.bind();
+		glActiveTexture(GL_TEXTURE1);
+		specularMap.bind();
+
+		objectShader.setVec3("viewPos", camera.Position);
 		glm::mat4 view = camera.GetViewMatrix();
 	
-		firstShader.setMat4("view", view);
+		objectShader.setMat4("view", view);
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -0.25f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		firstShader.setMat4("model", model);
+		objectShader.setMat4("model", model);
 		glBindVertexArray(cubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
 		lightPos.x = 1.0f + sin(static_cast<float> (glfwGetTime())) * 2.0f;
 
-		firstShader.setVec3("lightPos", lightPos);
+		objectShader.setVec3("lightPos", lightPos);
 
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
@@ -298,16 +300,14 @@ int main()
 		glBindVertexArray(lightCubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
-		firstShader.use();
+		objectShader.use();
 
-		firstShader.setBool("enableSpecular", false);
+		objectShader.setBool("enableSpecular", false);
 		model = glm::mat4(1.0f);
-		firstShader.setMat4("model", model);
+		objectShader.setMat4("model", model);
 		glBindVertexArray(groundVAO);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, grass);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		grassTexture.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -321,13 +321,9 @@ int main()
 		glDisable(GL_DEPTH_TEST);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, dither);
-		pixelationShader.setInt("ditheeText", 1);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		screen.newFrame();
-		glfwPollEvents();
 	}
 	glDeleteFramebuffers(1, &framebuffer);
 	glDeleteVertexArrays;
@@ -348,7 +344,7 @@ void processInput()
 		auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastToggleTime).count();
 		if (elapsedTime > 200) // Cooldown period: 200 milliseconds
 		{
-			cameraFly = !cameraFly;
+			setLighting = !setLighting;
 			lastToggleTime = currentTime;
 		}
 	}
@@ -364,15 +360,8 @@ void processInput()
 
 	if (Keyboard::key(GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, cameraSpeed);
-
-	if (Keyboard::key(GLFW_KEY_F) == GLFW_PRESS)
-	{
-		cameraFly= !cameraFly;
-		
-	}
 	if(true)
 	camera.Position.y = 0.5f;
-	
 }
 
 unsigned int loadTexture(char const* path)

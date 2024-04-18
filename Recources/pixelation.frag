@@ -4,7 +4,6 @@ in vec2 TexCoord;
 out vec4 FragColor;
 
 uniform sampler2D screenTexture; // The texture containing the scene
-uniform sampler2D ditherText;
 
 float luma(vec3 color) {
   return dot(color, vec3(0.299, 0.587, 0.114));
@@ -96,25 +95,19 @@ vec3 dither8x8(vec2 position, vec3 color) {
 
 void main()
 {
-          //pixelation
-          float Pixels = 4000.0;
-          float dx = 5 * (1.0 / Pixels);
-          float dy = 2.5 * (1.0 / Pixels);
-          vec2 Coord = vec2(dx * floor(TexCoord.x / dx),
-                        dy * floor(TexCoord.y / dy));
-          vec4 pixelatedColor = texture(screenTexture, Coord);
-
-       //   float dither = texture(screenTexture, Coord).r;
-        //  float threshold = dither * 1.0; // Adjust the threshold as needed
-          vec3 ditheredColor = floor(pixelatedColor.rgb * 16.0 + vec3(0.5)) / 16.0;
-          //ditheredColor = mix(ditheredColor, vec3(1.0), step(1.1, dither));
-      //ditheredColor = vec3(1.0, 0.0, 0.0);
-          vec3 ditheredPattern = dither8x8(gl_FragCoord.xy, ditheredColor);
-          vec3 finalColor = mix(ditheredColor, ditheredPattern, 0.5);
-        //  float darkeningFactor = 0.7;
-       //   finalColor *= darkeningFactor;
-
-        //  FragColor = vec4(dither8x8(gl_FragCoord.xy, pixelatedColor.rgb), 1.0);
-
-          FragColor = vec4(finalColor, 1.0);
+    float Pixels = 4000.0;
+    float dx = 5 * (1.0 / Pixels);
+    float dy = 2.5 * (1.0 / Pixels);
+    vec2 Coord = vec2(dx * floor(TexCoord.x / dx), dy * floor(TexCoord.y / dy));
+    vec4 pixelatedColor = texture(screenTexture, Coord);
+    vec3 ditheredColor = floor(pixelatedColor.rgb * 16.0 + vec3(0.5)) / 16.0;
+    //ditheredColor = mix(ditheredColor, vec3(1.0), step(1.1, dither));
+    //ditheredColor = vec3(1.0, 0.0, 0.0);
+    vec3 ditheredPattern = dither8x8(gl_FragCoord.xy, ditheredColor);
+    vec3 finalColor = mix(ditheredColor, ditheredPattern, 0.5);
+    float darkeningFactor = 0.7;
+    finalColor *= darkeningFactor;
+ 
+    //  FragColor = vec4(dither8x8(gl_FragCoord.xy, pixelatedColor.rgb), 1.0);
+    FragColor = vec4(finalColor, 1.0);
 }
