@@ -4,7 +4,7 @@
 This project documents my journey with OpenGL and graphics programming
 
 ## Project status
-Lighting and renderer abstraction.
+Lighting and Model importer
 ## Current state of project
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/3bm_NPNFyZs/0.jpg)](https://www.youtube.com/watch?v=3bm_NPNFyZs)
 ## Technologies used:
