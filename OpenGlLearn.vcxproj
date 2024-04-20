@@ -164,6 +164,9 @@
     <ClInclude Include="Source\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="models\lotr_troll\scene.gltf" />
+    <None Include="Recources\assets\low_poly_cars\scene.bin" />
+    <None Include="Recources\assets\low_poly_cars\scene.gltf" />
     <None Include="Recources\light.frag" />
     <None Include="Recources\pixelation.frag" />
     <None Include="Recources\pixelation.vert" />
@@ -171,15 +174,18 @@
     <None Include="Recources\shader.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Recources\textures\brick.png" />
-    <Image Include="Recources\textures\cat.jpg" />
-    <Image Include="Recources\textures\cat2.jpg" />
-    <Image Include="Recources\textures\container.jpg" />
-    <Image Include="Recources\textures\container2.png" />
-    <Image Include="Recources\textures\container2_specular.png" />
-    <Image Include="Recources\textures\dither.jpg" />
-    <Image Include="Recources\textures\grass.jpg" />
-    <Image Include="Recources\textures\psx_dither.png" />
+    <Image Include="Recources\assets\low_poly_cars\textures\Materiais.001_baseColor.jpeg" />
+    <Image Include="Recources\assets\low_poly_cars\textures\Materiais.003_baseColor.png" />
+    <Image Include="Recources\assets\low_poly_cars\textures\montecarlo70_baseColor.jpeg" />
+    <Image Include="Recources\textures1\brick.png" />
+    <Image Include="Recources\textures1\cat.jpg" />
+    <Image Include="Recources\textures1\cat2.jpg" />
+    <Image Include="Recources\textures1\container.jpg" />
+    <Image Include="Recources\textures1\container2.png" />
+    <Image Include="Recources\textures1\container2_specular.png" />
+    <Image Include="Recources\textures1\dither.jpg" />
+    <Image Include="Recources\textures1\grass.jpg" />
+    <Image Include="Recources\textures1\psx_dither.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

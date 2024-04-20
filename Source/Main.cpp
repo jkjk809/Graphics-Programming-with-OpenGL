@@ -19,6 +19,7 @@
 #include "graphics/Texture.h"
 
 #include "graphics/models/Cube.hpp"
+#include "graphics/Model.h"
 
 void processInput();
 
@@ -67,8 +68,11 @@ int main()
 	Shader lightShader("Recources\\shader.vert", "Recources\\light.frag");
 	Shader pixelationShader("Recources\\pixelation.vert", "Recources\\pixelation.frag");
 
-	Cube cube(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
-	cube.init();
+	Model m;
+	m.loadModel("Recources/assets/low_poly_cars/scene.gltf");
+
+	//Cube cube(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+	//vube.init();
 	Cube lightCube(lightPos, glm::vec3(0.1f));
 	lightCube.init();
 	//Verticers for our cube.
@@ -148,8 +152,8 @@ int main()
 	objectShader.setVec3("lightColor", 0.5f, 0.0f, 0.0f);
 	objectShader.setVec3("fogColor", .631f, 0.553f, 0.66f);
 
-	Texture grassTexture("Recources/textures/grass.jpg", "grassTexture");
-	grassTexture.load();
+	//Texture grassTexture("Recources/textures/grass.jpg", "grassTexture");
+	//grassTexture.load();
 	pixelationShader.use();
 	pixelationShader.setInt("screenTexture", 0);
 	
@@ -208,41 +212,26 @@ int main()
 		objectShader.setBool("lighting", setLighting);
 		objectShader.setVec3("viewPos", camera.Position);
 		objectShader.setMat4("view", view);
-		//cube drawing
-		lightCube.pos.x = 1.0f + sin(glfwGetTime()) * 10.0f;
-		glm::vec3 scaledLightPos = lightCube.pos * lightCube.size;
-		objectShader.setVec3("lightPos", scaledLightPos);
-		for (float i = 0.0; i < 20.0; i++)
-		{
-			for (float j = -0.5; j < 50.5; j++)
-			{
-				cube.render(objectShader);
-				cube.pos = glm::vec3(i, j, 0.0f);
-			}
-		}
+
+		m.render(objectShader);
 		
-		
-		//lightPos.x = 1.0f + sin(static_cast<float> (glfwGetTime())) * 2.0f;
-		//lightCube.pos.x = lightPos.x;
-		
-		//objectShader.setVec3("lightPos", lightCube.pos);
 		
 		
 		lightShader.use();
 		lightShader.setMat4("view", view);
 		
-		
 		lightCube.render(lightShader);
+		
 		
 		objectShader.use();
 
-		objectShader.setBool("enableSpecular", false);
-		glm::mat4 model = glm::mat4(1.0f);
-		objectShader.setMat4("model", model);
-		glBindVertexArray(groundVAO);
-		glActiveTexture(GL_TEXTURE0);
-		grassTexture.bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		//objectShader.setBool("enableSpecular", false);
+		//glm::mat4 model = glm::mat4(1.0f);
+		//objectShader.setMat4("model", model);
+		//glBindVertexArray(groundVAO);
+		//glActiveTexture(GL_TEXTURE0);
+		//grassTexture.bind();
+		//glDrawArrays(GL_TRIANGLES, 0, 6);
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
@@ -266,6 +255,8 @@ int main()
 		
 		screen.newFrame();
 	}
+
+	m.cleanup();
 	glDeleteFramebuffers(1, &framebuffer);
 	glDeleteVertexArrays;
 	glfwTerminate();
