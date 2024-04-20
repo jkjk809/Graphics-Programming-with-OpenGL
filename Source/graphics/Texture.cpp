@@ -11,7 +11,7 @@ Texture::Texture(const char* path, const char* name, bool defaultParams)
 	generate();
 
 	if (defaultParams) {
-		setFilters(GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST);
+		setFilters(GL_NEAREST);
 		setWrap(GL_REPEAT);
 	}
 }

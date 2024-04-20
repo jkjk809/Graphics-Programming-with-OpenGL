@@ -20,7 +20,6 @@
 
 #include "graphics/models/Cube.hpp"
 
-unsigned int loadTexture(char const* path);
 void processInput();
 
 auto currentTime = std::chrono::steady_clock::now();
@@ -32,8 +31,8 @@ float lastFrame = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 Screen screen;
 Mouse mouse(&camera);
+bool setLighting = false;
 
-bool setLighting = true;
 
 glm::vec3 lightPos(-2.2f, 5.0f, -20.0f);
 
@@ -151,10 +150,10 @@ int main()
 
 	Texture grassTexture("Recources/textures/grass.jpg", "grassTexture");
 	grassTexture.load();
-
 	pixelationShader.use();
 	pixelationShader.setInt("screenTexture", 0);
 	
+
 	GLuint framebuffer;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -163,15 +162,15 @@ int main()
 	glGenTextures(1, &textureColorBuffer);
 	glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screen.SCR_WIDTH, screen.SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 320, 240, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
+ 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
 
 	unsigned int rbo;
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screen.SCR_WIDTH, screen.SCR_HEIGHT);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 320, 240);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureColorBuffer, 0);
@@ -187,8 +186,9 @@ int main()
 		processInput();
 		glEnable(GL_DEPTH_TEST);
 
-		glViewport(0, 0, screen.SCR_WIDTH, screen.SCR_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		glViewport(0, 0, 320, 240);
+		
 		screen.update();
 		
 		
@@ -202,8 +202,15 @@ int main()
 		lightCube.pos.x = 1.0f + sin(glfwGetTime()) * 10.0f;
 		glm::vec3 scaledLightPos = lightCube.pos * lightCube.size;
 		objectShader.setVec3("lightPos", scaledLightPos);
-
-		cube.render(objectShader);
+		for (float i = 0.0; i < 20.0; i++)
+		{
+			for (float j = -0.5; j < 30.5; j++)
+			{
+				cube.render(objectShader);
+				cube.pos = glm::vec3(i, j, 0.0f);
+			}
+		}
+		
 		
 		//lightPos.x = 1.0f + sin(static_cast<float> (glfwGetTime())) * 2.0f;
 		//lightCube.pos.x = lightPos.x;
@@ -226,11 +233,18 @@ int main()
 		glActiveTexture(GL_TEXTURE0);
 		grassTexture.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		
-		glClearColor(0.6f, 0.5f, 0.4f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+		glReadBuffer(GL_COLOR_ATTACHMENT0);
+		glViewport(0, 0, 2560, 1440);
+		glBlitFramebuffer(
+			0, 0, 320, 240,
+			0, 0, screen.SCR_WIDTH, screen.SCR_HEIGHT,
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		//glClearColor(0.6f, 0.5f, 0.4f, 1.0f);
+
+		//glClear(GL_COLOR_BUFFER_BIT);
 
 		pixelationShader.use();
 		
@@ -239,7 +253,7 @@ int main()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-
+		
 		screen.newFrame();
 	}
 	glDeleteFramebuffers(1, &framebuffer);

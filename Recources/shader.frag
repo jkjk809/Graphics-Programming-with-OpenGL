@@ -31,16 +31,28 @@ uniform Light light;
 uniform bool enableSpecular;
 uniform Material material;
 uniform bool lighting;
+
+float near = 0.5; 
+float far  = 10.0; 
+
+float LinearizeDepth(float depth) 
+{
+    float z = depth * 2.0 - 1.0; // back to NDC 
+    return (2.0 * near * far) / (far + near - z * (far - near));	
+}
+
+vec3 fogColor = vec3(.631f, 0.553f, 0.66f);
+
 void main()
 {
 // vec2 correctedTexCoord = TexCoords + vec2(FragPos.x * Depth, FragPos.y * Depth);
+   float depth = LinearizeDepth(gl_FragCoord.z) / far;
    
    if(lighting){
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(lightPos - FragPos);  
     float diff = max(dot(norm, lightDir), 0.0);
     
-
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
      vec3 ambient  = light.ambient * vec3(texture(material.diffuse, TexCoords));
@@ -49,23 +61,25 @@ void main()
     if(enableSpecular){
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
-     vec3 result = ambient + diffuse + specular;
-     FragColor = vec4(result, 1.0);
+    vec3 result = ambient + diffuse + specular;
+    vec3 finalColor = mix(result.rgb, fogColor, depth);
+    FragColor = vec4(finalColor, 1.0);
     }
     else {
+
      vec3 specular = vec3(0.0, 0.0, 0.0);
      vec3 result = ambient + diffuse + specular;
+     vec3 finalColor = mix(result.rgb, fogColor, depth);
      FragColor = vec4(result, 1.0);
-    }
+
+       }
     }
     else{
-    FragColor = texture(material.diffuse, TexCoords);
+      vec4 materialColor = texture(material.diffuse, TexCoords);
+      vec3 finalColor = mix(materialColor.rgb, fogColor, depth);
+      FragColor = vec4(finalColor, 1.0);
     }
-   // vec3 ambient  = light.ambient * vec3(texture(material.diffuse, TexCoords));
-  //  vec3 diffuse  = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-   // vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
-
-  //  vec3 result = ambient + diffuse + specular;
-    //FragColor = texture(material.diffuse, TexCoords);
-   // FragColor = vec4(result, 1.0);
+   
+   // vec3 finalColor = mix(FragColor.rgb, fogColor, depth);
+    //FragColor = vec4(finalColor, 1.0);
 };

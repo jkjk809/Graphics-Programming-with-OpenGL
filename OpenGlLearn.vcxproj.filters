@@ -107,5 +107,17 @@
     <Image Include="Recources\textures\dither.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Recources\textures\brick.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Recources\textures\cat.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Recources\textures\cat2.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Recources\textures\psx_dither.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

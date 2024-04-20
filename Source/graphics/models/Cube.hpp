@@ -62,7 +62,7 @@ public:
 			indices[i]= i;
  		}
 
-		Texture diffuseMap("Recources/textures/container2.png", "material.diffuse");
+		Texture diffuseMap("Recources/textures/brick.png", "material.diffuse");
 		diffuseMap.load();
 		Texture specularMap("Recources/textures/container2_specular.png", "material.specular");
 		specularMap.load();

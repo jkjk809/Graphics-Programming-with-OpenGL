@@ -22,7 +22,7 @@ bool Screen::init()
 	SCR_WIDTH = mode->width;
 	SCR_HEIGHT = mode->height;
 
-	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Simple Render", NULL, NULL);
+	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Simple Render", primaryMonitor, NULL);
 
 	if (!window)
 	{
@@ -45,13 +45,13 @@ void Screen::setParameters()
 	glfwSetCursorPosCallback(window, Mouse::cursorPosCallback);
 	glfwSetMouseButtonCallback(window, Mouse::mouseButtonCallback);
 	glfwSetScrollCallback(window, Mouse::mouseWheelCallback);
-
+	glfwMakeContextCurrent(window);
 	glEnable(GL_DEPTH_TEST);
 }
 
 void Screen::update()
 {
-	glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
+	glClearColor(.631f, 0.553f, 0.66f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
