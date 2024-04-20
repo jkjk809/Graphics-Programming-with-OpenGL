@@ -14,7 +14,7 @@ struct Vertex {
 	glm::vec3 pos;
 	glm::vec2 texCoord;
 	glm::vec3 normals;
-
+	
 	static std::vector<struct Vertex> genList(float* vertices, int nVertices);
 };
 typedef struct Vertex Vertex;
@@ -22,6 +22,7 @@ typedef struct Vertex Vertex;
 class Mesh
 {
 public:
+
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	unsigned int VAO;
@@ -36,7 +37,7 @@ public:
 
 private:
 	unsigned int VBO, EBO;
-
+	
 	void setup();
 
 };

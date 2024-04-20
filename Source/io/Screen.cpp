@@ -4,7 +4,7 @@
 
 unsigned int Screen::SCR_WIDTH;
 unsigned int Screen::SCR_HEIGHT;
-
+glm::vec4 clearColor();
 void Screen::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -19,8 +19,8 @@ bool Screen::init()
 {
 	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
-	SCR_WIDTH = mode->width;
-	SCR_HEIGHT = mode->height;
+	SCR_WIDTH = 1024;
+	SCR_HEIGHT = 768;
 
 	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Simple Render", primaryMonitor, NULL);
 
@@ -36,7 +36,7 @@ bool Screen::init()
 void Screen::setParameters()
 {
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
+	clearColor = glm::vec4(.631f, 0.553f, 0.66f, 1.0f);
 	glfwSetFramebufferSizeCallback(window, Screen::framebufferSizeCallback);
 
 	glfwSetKeyCallback(window, Keyboard::keyCallback);
@@ -51,7 +51,7 @@ void Screen::setParameters()
 
 void Screen::update()
 {
-	glClearColor(.631f, 0.553f, 0.66f, 1.0f);
+	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -69,4 +69,8 @@ bool Screen::shouldClose()
 void Screen::setShouldClose(bool shouldClose)
 {
 	glfwSetWindowShouldClose(window, shouldClose);
+}
+
+void Screen::setClearColor(float r, float g, float b, float a) {
+	clearColor = glm::vec4(r, g, b, a);
 }

@@ -4,6 +4,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 class Screen
 {
@@ -18,7 +19,7 @@ public:
 	bool init();
 
 	void setParameters();
-
+	void setClearColor(float r, float g, float b, float a);
 	void update();
 	void newFrame();
 
@@ -27,7 +28,7 @@ public:
 
 private:
 	GLFWwindow* window;
-
+	glm::vec4 clearColor;
 };
 
 

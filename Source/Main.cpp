@@ -32,7 +32,7 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 Screen screen;
 Mouse mouse(&camera);
 bool setLighting = false;
-
+bool death = false;
 
 glm::vec3 lightPos(-2.2f, 5.0f, -20.0f);
 
@@ -129,7 +129,7 @@ int main()
 	glEnableVertexAttribArray(1);
 	
 	glm::mat4 projection = glm::mat4(1.0f);
-	projection = glm::perspective(glm::radians(70.0f), static_cast<float>(screen.SCR_WIDTH) / static_cast<float> (screen.SCR_HEIGHT), 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(45.0f), static_cast<float>(screen.SCR_WIDTH) / static_cast<float> (screen.SCR_HEIGHT), 0.1f, 100.0f);
 
 	lightShader.use();
 	lightShader.setMat4("projection", projection);
@@ -138,7 +138,7 @@ int main()
 	objectShader.setMat4("projection", projection);
 
 	objectShader.setVec3("light.ambient", 0.07f, 0.07f, 0.07f);
-	objectShader.setVec3("light.diffuse", 1.5f, 1.5f, 1.5f); // darken diffuse light a bit
+	objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
 	objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 	objectShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
@@ -146,7 +146,7 @@ int main()
 
 	objectShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 	objectShader.setVec3("lightColor", 0.5f, 0.0f, 0.0f);
-
+	objectShader.setVec3("fogColor", .631f, 0.553f, 0.66f);
 
 	Texture grassTexture("Recources/textures/grass.jpg", "grassTexture");
 	grassTexture.load();
@@ -188,11 +188,21 @@ int main()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glViewport(0, 0, 320, 240);
-		
 		screen.update();
 		
 		
 		objectShader.use();
+		if(death)
+		{
+			screen.setClearColor(0.341f, 0.024f, 0.024f, 1.0f);
+			objectShader.setVec3("fogColor", 0.341f, 0.024f, 0.024f);
+	    }
+		else
+		{
+			screen.setClearColor(.631f, 0.553f, 0.66f, 1.0f);
+			objectShader.setVec3("fogColor", .631f, 0.553f, 0.66f);
+		}
+
 		glm::mat4 view = camera.GetViewMatrix();
 		objectShader.setBool("enableSpecular", true);
 		objectShader.setBool("lighting", setLighting);
@@ -204,7 +214,7 @@ int main()
 		objectShader.setVec3("lightPos", scaledLightPos);
 		for (float i = 0.0; i < 20.0; i++)
 		{
-			for (float j = -0.5; j < 30.5; j++)
+			for (float j = -0.5; j < 50.5; j++)
 			{
 				cube.render(objectShader);
 				cube.pos = glm::vec3(i, j, 0.0f);
@@ -237,7 +247,7 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
-		glViewport(0, 0, 2560, 1440);
+		glViewport(0, 0, 1024, 768);
 		glBlitFramebuffer(
 			0, 0, 320, 240,
 			0, 0, screen.SCR_WIDTH, screen.SCR_HEIGHT,
@@ -275,7 +285,9 @@ void processInput()
 		auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastToggleTime).count();
 		if (elapsedTime > 200) // Cooldown period: 200 milliseconds
 		{
+			death = !death;
 			setLighting = !setLighting;
+			screen.setClearColor(0.5, 0.0, 0.0, 1.0);
 			lastToggleTime = currentTime;
 		}
 	}

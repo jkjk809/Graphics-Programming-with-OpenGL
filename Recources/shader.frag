@@ -40,8 +40,8 @@ float LinearizeDepth(float depth)
     float z = depth * 2.0 - 1.0; // back to NDC 
     return (2.0 * near * far) / (far + near - z * (far - near));	
 }
-
-vec3 fogColor = vec3(.631f, 0.553f, 0.66f);
+uniform vec3 fogColor;
+//vec3 fogColor = vec3(.631f, 0.553f, 0.66f);
 
 void main()
 {
@@ -60,17 +60,17 @@ void main()
 
     if(enableSpecular){
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
-    vec3 result = ambient + diffuse + specular;
+    vec3 specular = light.specular * spec * lightColor;
+    vec3 result = ambient + diffuse + specular * lightColor;
     vec3 finalColor = mix(result.rgb, fogColor, depth);
     FragColor = vec4(finalColor, 1.0);
     }
     else {
 
      vec3 specular = vec3(0.0, 0.0, 0.0);
-     vec3 result = ambient + diffuse + specular;
+     vec3 result = ambient + diffuse * lightColor;
      vec3 finalColor = mix(result.rgb, fogColor, depth);
-     FragColor = vec4(result, 1.0);
+     FragColor = vec4(finalColor, 1.0);
 
        }
     }
