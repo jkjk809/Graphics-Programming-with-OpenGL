@@ -68,9 +68,12 @@ int main()
 	Shader lightShader("Recources\\shader.vert", "Recources\\light.frag");
 	Shader pixelationShader("Recources\\pixelation.vert", "Recources\\pixelation.frag");
 
-	Model m;
-	m.loadModel("Recources/assets/low_poly_cars/scene.gltf");
-
+	Model m(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.05f));
+	Model e(glm::vec3(1.4f, 0.0f, -2.0f), glm::vec3(0.05f));
+	Model l(glm::vec3(-1.4f, 0.0f, -2.0f), glm::vec3(2.0f));
+	e.loadModel("Recources/assets/ps1-horror-hospital-gurney/source/HospitalGurney)EmbeddedMedia.fbx");
+	m.loadModel("Recources/assets/toon-dinosaur-creature-3/source/dino toon.OBJ");
+	l.loadModel("Recources/assets/spongebob-squarepants/source/spongebob_bind.obj");
 	//Cube cube(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
 	//vube.init();
 	Cube lightCube(lightPos, glm::vec3(0.1f));
@@ -214,10 +217,11 @@ int main()
 		objectShader.setMat4("view", view);
 
 		m.render(objectShader);
-		
-		
+		e.render(objectShader);
+		l.render(objectShader);
 		
 		lightShader.use();
+		
 		lightShader.setMat4("view", view);
 		
 		lightCube.render(lightShader);
@@ -282,7 +286,7 @@ void processInput()
 			lastToggleTime = currentTime;
 		}
 	}
-	const float cameraSpeed = 0.8f * deltaTime; // adjust accordingly
+	const float cameraSpeed = 1.8f * deltaTime; // adjust accordingly
 	if (Keyboard::key(GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, cameraSpeed);
 
@@ -294,6 +298,6 @@ void processInput()
 
 	if (Keyboard::key(GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, cameraSpeed);
-	if(true)
+	if(false)
 	camera.Position.y = 0.5f;
 }

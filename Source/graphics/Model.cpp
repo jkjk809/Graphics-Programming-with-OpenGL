@@ -1,5 +1,6 @@
 #include "Model.h"
 
+
 Model::Model(glm::vec3 pos, glm::vec3 size)
 	: pos(pos), size(size) {}
 void Model::init() {}
