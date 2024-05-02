@@ -93,33 +93,53 @@
     <None Include="Recources\light.frag" />
     <None Include="Recources\pixelation.vert" />
     <None Include="Recources\pixelation.frag" />
+    <None Include="models\lotr_troll\scene.gltf" />
+    <None Include="Recources\assets\low_poly_cars\scene.gltf" />
+    <None Include="Recources\assets\low_poly_cars\scene.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Recources\textures\container2_specular.png">
+    <Image Include="Recources\textures1\container2_specular.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Recources\textures\container2.png">
+    <Image Include="Recources\textures1\container2.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Recources\textures\grass.jpg">
+    <Image Include="Recources\textures1\grass.jpg">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Recources\textures\dither.jpg">
+    <Image Include="Recources\textures1\dither.jpg">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Recources\textures\brick.png">
+    <Image Include="models\house\textures\brick.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Recources\textures\cat.jpg">
+    <Image Include="Recources\textures1\cat.jpg">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Recources\textures\cat2.jpg">
+    <Image Include="Recources\textures1\cat2.jpg">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Recources\textures\psx_dither.png">
+    <Image Include="Recources\textures1\psx_dither.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Recources\textures\container.jpg">
+    <Image Include="Recources\textures1\container.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Recources\assets\low_poly_cars\textures\montecarlo70_baseColor.jpeg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Recources\assets\low_poly_cars\textures\Materiais.003_baseColor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Recources\assets\low_poly_cars\textures\Materiais.001_baseColor.jpeg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\house\textures\grass.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\house\textures\door.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

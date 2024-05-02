@@ -36,8 +36,10 @@ bool Screen::init()
 void Screen::setParameters()
 {
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-	clearColor = glm::vec4(.631f, 0.553f, 0.66f, 1.0f);
+	clearColor = glm::vec4(0.412f, 0.51f, 0.353f, 1.0f);
 	glfwSetFramebufferSizeCallback(window, Screen::framebufferSizeCallback);
+
+	//clearColor = glm::vec4(.631f, 0.553f, 0.66f, 1.0f);
 
 	glfwSetKeyCallback(window, Keyboard::keyCallback);
 

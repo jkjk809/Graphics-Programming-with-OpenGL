@@ -10,8 +10,8 @@ public:
 	glm::vec3 pos;
 	glm::vec3 size;
 
-	Cube(glm::vec3 pos, glm::vec3 size)
-		:pos(pos), size(size) {}
+	Cube(glm::vec3 pos = glm::vec3(0.0f), glm::vec3 size = glm::vec3(1.0f))
+		: Model(pos, size) {}
 
 	void init()
 	{
@@ -57,29 +57,19 @@ public:
 		};
 
 		std::vector<unsigned int> indices(nVertices);
-		for (unsigned int i = 0; i < nVertices; i++)
+		for (int i = 0; i < nVertices; i++)
 		{
 			indices[i]= i;
  		}
 
-		Texture diffuseMap("Recources/textures/brick.png", "material.diffuse");
-		diffuseMap.load();
-		Texture specularMap("Recources/textures/container2_specular.png", "material.specular");
-		specularMap.load();
+		//Texture diffuseMap("Recources/textures/brick.png", "material.diffuse");
+		//diffuseMap.load();
+		//Texture specularMap("Recources/textures/container2_specular.png", "material.specular");
+		//specularMap.load();
 
-		meshes.push_back(Mesh(Vertex::genList(vertices, nVertices), indices, {diffuseMap, specularMap}));
+		meshes.push_back(Mesh(Vertex::genList(vertices, nVertices), indices));
 	}
 
-	void render(Shader shader)
-	{
-		glm::mat4 model = glm::mat4(1.0f);
-		
-		model = glm::scale(model, size);
-		model = glm::translate(model, pos);
-
-		shader.setMat4("model", model);
-		Model::render(shader);
-	}
 };
 
 #endif
