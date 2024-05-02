@@ -35,7 +35,7 @@ Mouse mouse(&camera);
 bool setLighting = false;
 bool death = false;
 
-glm::vec3 lightPos(-2.2f, 5.0f, -20.0f);
+glm::vec3 lightPos(0.0f, 10.0f, 10.0f);
 
 int main()
 {
@@ -68,15 +68,15 @@ int main()
 	Shader lightShader("Recources\\shader.vert", "Recources\\light.frag");
 	Shader pixelationShader("Recources\\pixelation.vert", "Recources\\pixelation.frag");
 
-	Model m(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.05f));
+	Model m(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(2.0f));
 	Model e(glm::vec3(1.4f, 0.0f, -2.0f), glm::vec3(0.05f));
 	Model l(glm::vec3(-1.4f, 0.0f, -2.0f), glm::vec3(2.0f));
-	e.loadModel("Recources/assets/ps1-horror-hospital-gurney/source/HospitalGurney)EmbeddedMedia.fbx");
-	m.loadModel("Recources/assets/toon-dinosaur-creature-3/source/dino toon.OBJ");
-	l.loadModel("Recources/assets/spongebob-squarepants/source/spongebob_bind.obj");
+	m.loadModel("models/house/whiteHouse.obj");
+	//m.loadModel("Recources/assets/toon-dinosaur-creature-3/source/dino toon.OBJ");
+	l.loadModel("models/terrain/terrain.obj");
 	//Cube cube(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
 	//vube.init();
-	Cube lightCube(lightPos, glm::vec3(0.1f));
+	Cube lightCube(lightPos, glm::vec3(1.0f));
 	lightCube.init();
 	//Verticers for our cube.
 
@@ -159,25 +159,24 @@ int main()
 	//grassTexture.load();
 	pixelationShader.use();
 	pixelationShader.setInt("screenTexture", 0);
-	
 
 	GLuint framebuffer;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	
+
 	unsigned int textureColorBuffer;
 	glGenTextures(1, &textureColorBuffer);
 	glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 320, 240, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
- 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
 
 	unsigned int rbo;
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 320, 240);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 640, 480);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureColorBuffer, 0);
@@ -192,32 +191,37 @@ int main()
 
 		processInput();
 		glEnable(GL_DEPTH_TEST);
-
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		glViewport(0, 0, 320, 240);
+		glViewport(0, 0, 640, 480);
+
 		screen.update();
 		
 		
 		objectShader.use();
-		if(death)
+		/*if (death)
 		{
 			screen.setClearColor(0.341f, 0.024f, 0.024f, 1.0f);
 			objectShader.setVec3("fogColor", 0.341f, 0.024f, 0.024f);
-	    }
+		}
 		else
 		{
 			screen.setClearColor(.631f, 0.553f, 0.66f, 1.0f);
 			objectShader.setVec3("fogColor", .631f, 0.553f, 0.66f);
-		}
+		}*/
+
+			screen.setClearColor(0.98f, 0.839f, 0.647f, 1.0f);
+			objectShader.setVec3("fogColor", 0.271f, 0.329f, 0.235f);
+		
 
 		glm::mat4 view = camera.GetViewMatrix();
 		objectShader.setBool("enableSpecular", true);
 		objectShader.setBool("lighting", setLighting);
 		objectShader.setVec3("viewPos", camera.Position);
 		objectShader.setMat4("view", view);
+		objectShader.setVec3("lightPos", lightPos);
 
 		m.render(objectShader);
-		e.render(objectShader);
+		//e.render(objectShader);
 		l.render(objectShader);
 		
 		lightShader.use();
@@ -229,6 +233,23 @@ int main()
 		
 		objectShader.use();
 
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+		glReadBuffer(GL_COLOR_ATTACHMENT0);
+		glViewport(0, 0, 1024, 768);
+		glBlitFramebuffer(
+			0, 0, 640, 480,
+			0, 0, screen.SCR_WIDTH, screen.SCR_HEIGHT,
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+		pixelationShader.use();
+
+		glBindVertexArray(rectVAO);
+		glDisable(GL_DEPTH_TEST);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
 		//objectShader.setBool("enableSpecular", false);
 		//glm::mat4 model = glm::mat4(1.0f);
 		//objectShader.setMat4("model", model);
@@ -237,31 +258,13 @@ int main()
 		//grassTexture.bind();
 		//glDrawArrays(GL_TRIANGLES, 0, 6);
 		
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
-		glReadBuffer(GL_COLOR_ATTACHMENT0);
-		glViewport(0, 0, 1024, 768);
-		glBlitFramebuffer(
-			0, 0, 320, 240,
-			0, 0, screen.SCR_WIDTH, screen.SCR_HEIGHT,
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-		//glClearColor(0.6f, 0.5f, 0.4f, 1.0f);
-
-		//glClear(GL_COLOR_BUFFER_BIT);
-
-		pixelationShader.use();
-		
-		glBindVertexArray(rectVAO);
-		glDisable(GL_DEPTH_TEST);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+	
 		
 		screen.newFrame();
 	}
 
 	m.cleanup();
-	glDeleteFramebuffers(1, &framebuffer);
+	l.cleanup();
 	glDeleteVertexArrays;
 	glfwTerminate();
 	return 0;
@@ -298,6 +301,6 @@ void processInput()
 
 	if (Keyboard::key(GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, cameraSpeed);
-	if(false)
-	camera.Position.y = 0.5f;
+	if(true)
+	camera.Position.y = 1.0f;
 }

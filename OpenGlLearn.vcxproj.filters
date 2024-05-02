@@ -112,7 +112,7 @@
     <Image Include="Recources\textures1\dither.jpg">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Recources\textures1\brick.png">
+    <Image Include="models\house\textures\brick.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Recources\textures1\cat.jpg">
@@ -134,6 +134,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Recources\assets\low_poly_cars\textures\Materiais.001_baseColor.jpeg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\house\textures\grass.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\house\textures\door.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

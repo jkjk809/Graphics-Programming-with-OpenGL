@@ -174,10 +174,12 @@
     <None Include="Recources\shader.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="models\house\textures\door.jpg" />
+    <Image Include="models\house\textures\grass.jpg" />
     <Image Include="Recources\assets\low_poly_cars\textures\Materiais.001_baseColor.jpeg" />
     <Image Include="Recources\assets\low_poly_cars\textures\Materiais.003_baseColor.png" />
     <Image Include="Recources\assets\low_poly_cars\textures\montecarlo70_baseColor.jpeg" />
-    <Image Include="Recources\textures1\brick.png" />
+    <Image Include="models\house\textures\brick.png" />
     <Image Include="Recources\textures1\cat.jpg" />
     <Image Include="Recources\textures1\cat2.jpg" />
     <Image Include="Recources\textures1\container.jpg" />

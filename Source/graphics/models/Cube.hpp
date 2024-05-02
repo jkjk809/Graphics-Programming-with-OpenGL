@@ -57,7 +57,7 @@ public:
 		};
 
 		std::vector<unsigned int> indices(nVertices);
-		for (unsigned int i = 0; i < nVertices; i++)
+		for (int i = 0; i < nVertices; i++)
 		{
 			indices[i]= i;
  		}

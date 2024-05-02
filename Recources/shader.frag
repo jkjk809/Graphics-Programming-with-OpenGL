@@ -36,8 +36,8 @@ uniform bool enableSpecular;
 uniform Material material;
 uniform bool lighting;
 
-float near = 0.5; 
-float far  = 10.0; 
+float near = 0.1; 
+float far  = 6.0; 
 
 float LinearizeDepth(float depth) 
 {
@@ -67,23 +67,23 @@ void main()
     vec3 specular = light.specular * spec * lightColor;
     vec3 result = ambient + diffuse + specular * lightColor;
     vec3 finalColor = mix(result.rgb, fogColor, depth);
-    FragColor = vec4(finalColor, 1.0);
+    FragColor = vec4(result.rgb, 1.0);
     }
     else {
 
      vec3 specular = vec3(0.0, 0.0, 0.0);
      vec3 result = ambient + diffuse * lightColor;
-     vec3 finalColor = mix(result.rgb, fogColor, depth);
-     FragColor = vec4(finalColor, 1.0);
+    vec3 finalColor = mix(result.rgb, fogColor, depth);
+     FragColor = vec4(result.rgb, 1.0);
 
        }
     }
     else{
       vec4 materialColor = texture(diffuse0, TexCoords);
       vec3 finalColor = mix(materialColor.rgb, fogColor, depth);
-      FragColor = vec4(finalColor, 1.0);
+      FragColor = vec4(materialColor.rgb, 1.0f);
     }
    
-   // vec3 finalColor = mix(FragColor.rgb, fogColor, depth);
-    //FragColor = vec4(finalColor, 1.0);
+  // vec3 finalColor = mix(FragColor.rgb, fogColor, depth);
+  // FragColor = vec4(result.rgb, 1.0);
 };
