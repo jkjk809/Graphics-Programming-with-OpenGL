@@ -130,7 +130,7 @@ int main()
 
 	while (!screen.shouldClose())
 	{
-		
+
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -148,8 +148,8 @@ int main()
 
 		screen.update();
 
-	
-		
+
+
 		objectShader.use();
 		if (death)
 		{
@@ -162,9 +162,9 @@ int main()
 			objectShader.setVec3("fogColor", .631f, 0.553f, 0.66f);
 		}
 
-	//	screen.setClearColor(0.98f, 0.839f, 0.647f, 1.0f);
-	//	objectShader.setVec3("fogColor", 0.271f, 0.329f, 0.235f);
-		
+		//	screen.setClearColor(0.98f, 0.839f, 0.647f, 1.0f);
+		//	objectShader.setVec3("fogColor", 0.271f, 0.329f, 0.235f);
+
 
 		glm::mat4 view = camera.GetViewMatrix();
 		objectShader.setBool("enableSpecular", true);
@@ -176,14 +176,14 @@ int main()
 		m.render(objectShader);
 		//e.render(objectShader);
 		l.render(objectShader);
-		
+
 		lightShader.use();
-		
+
 		lightShader.setMat4("view", view);
-		
+
 		lightCube.render(lightShader);
-		
-		
+
+
 		objectShader.use();
 
 
@@ -195,9 +195,9 @@ int main()
 		//glActiveTexture(GL_TEXTURE0);
 		//grassTexture.bind();
 		//glDrawArrays(GL_TRIANGLES, 0, 6);
-		
-	
-		
+
+
+
 		screen.newFrame();
 	}
 
