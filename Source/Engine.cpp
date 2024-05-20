@@ -1,4 +1,4 @@
-#include "Engine.h";
+#include "Engine.h"
 
 Engine::Engine()
 	: camera(glm::vec3(0.0f, 0.5f, 0.0f))
@@ -98,7 +98,7 @@ Shader* Engine::getShader(const std::string& name)
 	}
 }
 
-void Engine::setShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath)
+void Engine::setShader(const std::string& name, const char* vertexPath, const char* fragmentPath)
 {
 	shaders[name] = std::make_unique<Shader>(vertexPath, fragmentPath);
 }
