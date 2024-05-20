@@ -22,17 +22,18 @@ public:
 	glm::vec3 pos;
 	glm::vec3 size;
 
-	Model(glm::vec3 pos = glm::vec3(0.0f), glm::vec3 size = glm::vec3(1.0f));
+	Model(const std::string& path, glm::vec3 pos = glm::vec3(0.0f), glm::vec3 size = glm::vec3(1.0f));
 	//ovverridden
 	void init();
 
 	void loadModel(std::string path);
-
-	void render(Shader shader);
+	void setShader(Shader* shader);
+	void render();
 
 	void cleanup();
 
 protected:
+	Shader* shader;
 	std::vector<Mesh> meshes;
 	std::string directory;
 	std::vector<Texture> textures_loaded;

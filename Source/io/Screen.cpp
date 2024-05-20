@@ -51,6 +51,8 @@ void Screen::setParameters()
 
 void Screen::update()
 {
+	glEnable(GL_DEPTH_TEST);
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
