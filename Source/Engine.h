@@ -74,7 +74,7 @@ public:
 	void run();
 
     Shader* getShader(const std::string& name);
-	void setShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
+	void setShader(const std::string& name, const char* vertexPath, const char* fragmentPath);
 
 	void addModel(const std::string& modelPath,
                   const glm::vec3& position = glm::vec3(0.0f),
