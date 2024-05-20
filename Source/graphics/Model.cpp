@@ -1,21 +1,23 @@
 #include "Model.h"
 
 
-Model::Model(glm::vec3 pos, glm::vec3 size)
-	: pos(pos), size(size) {}
+Model::Model(const std::string& path, glm::vec3 pos, glm::vec3 size)
+	: pos(pos), size(size) {
+	loadModel(path);
+}
 void Model::init() {}
 
-void Model::render(Shader shader)
+void Model::render()
 {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, pos);
 	model = glm::scale(model, size);
-	shader.setMat4("model", model);
-	shader.setFloat("material.shininess", 0.5f);
+	shader->setMat4("model", model);
+	shader->setFloat("material.shininess", 0.5f);
 
 	for (Mesh mesh : meshes)
 	{
-		mesh.render(shader);
+		mesh.render(*shader);
 	}
 }
 
@@ -43,6 +45,10 @@ void Model::loadModel(std::string path)
 
 }
 
+void Model::setShader(Shader* shader)
+{
+	this->shader = shader;
+}
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)

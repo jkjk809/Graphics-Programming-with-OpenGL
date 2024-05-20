@@ -1,8 +1,8 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include <chrono>
-
-#define STB_IMAGE_IMPLEMENTATION
+#include <unordered_map>
+//#define STB_IMAGE_IMPLEMENTATION
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -73,11 +73,27 @@ public:
 	bool init();
 	void run();
 
-	void setShader(const std::string& vertexPath, const std::string& fragmentPath);
-	void loadModel(const std::string& modelPath);
+    Shader* getShader(const std::string& name);
+	void setShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
+
+	void addModel(const std::string& modelPath,
+                  const glm::vec3& position = glm::vec3(0.0f),
+                  const glm::vec3& size = glm::vec3(1.0f));
 
 private:
+    void processInput();
+    void renderModels();
+
 	Screen screen;
-	std::unique_ptr<Shader> shader;
+    Camera camera;
+
+    Shader* defaultShader;
+    std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
 	std::vector<std::unique_ptr<Model>> models;
+
+    bool wireframe = false;
+    std::chrono::steady_clock::time_point lastToggleTime;
+    float deltaTime = 0.0f;
+    float lastFrame = 0.0f;
+
 };

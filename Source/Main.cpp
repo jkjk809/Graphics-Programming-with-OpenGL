@@ -69,12 +69,13 @@ int main()
 	Shader lightShader("Recources\\shader.vert", "Recources\\light.frag");
 	Shader pixelationShader("Recources\\pixelation.vert", "Recources\\pixelation.frag");
 
-	Model m(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(2.0f));
-	Model e(glm::vec3(1.4f, 0.0f, -2.0f), glm::vec3(0.05f));
-	Model l(glm::vec3(-1.4f, 0.0f, -2.0f), glm::vec3(2.0f));
-	m.loadModel("models/house/whiteHouse.obj");
+	Model m("models/house/whiteHouse.obj",glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(2.0f));
+	Model e("models/house/whiteHouse.obj",glm::vec3(1.4f, 0.0f, -2.0f), glm::vec3(0.05f));
+	Model l("models/terrain/terrain.obj",glm::vec3(-1.4f, 0.0f, -2.0f), glm::vec3(2.0f));
 
-	l.loadModel("models/terrain/terrain.obj");
+	m.setShader(&objectShader);
+	l.setShader(&objectShader);
+
 	Cube lightCube(lightPos, glm::vec3(1.0f));
 	lightCube.init();
 
@@ -145,7 +146,6 @@ int main()
 
 		glEnable(GL_DEPTH_TEST);
 		glViewport(0, 0, screen.SCR_WIDTH, screen.SCR_HEIGHT);
-
 		screen.update();
 
 
@@ -173,18 +173,19 @@ int main()
 		objectShader.setMat4("view", view);
 		objectShader.setVec3("lightPos", lightPos);
 
-		m.render(objectShader);
+		
+		m.render();
 		//e.render(objectShader);
-		l.render(objectShader);
+		l.render();
 
-		lightShader.use();
+	//	lightShader.use();
 
-		lightShader.setMat4("view", view);
+		//lightShader.setMat4("view", view);
 
-		lightCube.render(lightShader);
+		//lightCube.render(lightShader);
 
 
-		objectShader.use();
+		//objectShader.use();
 
 
 
@@ -195,8 +196,6 @@ int main()
 		//glActiveTexture(GL_TEXTURE0);
 		//grassTexture.bind();
 		//glDrawArrays(GL_TRIANGLES, 0, 6);
-
-
 
 		screen.newFrame();
 	}
