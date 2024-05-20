@@ -34,8 +34,9 @@ Screen screen;
 Mouse mouse(&camera);
 bool setLighting = false;
 bool death = false;
+bool wireframe = false;
 
-glm::vec3 lightPos(0.0f, 10.0f, 10.0f);
+glm::vec3 lightPos(-2.0f, 2.0f, 10.0f);
 
 int main()
 {
@@ -72,26 +73,10 @@ int main()
 	Model e(glm::vec3(1.4f, 0.0f, -2.0f), glm::vec3(0.05f));
 	Model l(glm::vec3(-1.4f, 0.0f, -2.0f), glm::vec3(2.0f));
 	m.loadModel("models/house/whiteHouse.obj");
-	//m.loadModel("Recources/assets/toon-dinosaur-creature-3/source/dino toon.OBJ");
+
 	l.loadModel("models/terrain/terrain.obj");
-	//Cube cube(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
-	//vube.init();
 	Cube lightCube(lightPos, glm::vec3(1.0f));
 	lightCube.init();
-	//Verticers for our cube.
-
-
-	float rectangleVertices[] =
-	{
-		// Coords    // texCoords
-		 1.0f, -1.0f,  1.0f, 0.0f,
-		-1.0f, -1.0f,  0.0f, 0.0f,
-		-1.0f,  1.0f,  0.0f, 1.0f,
-
-		 1.0f,  1.0f,  1.0f, 1.0f,
-		 1.0f, -1.0f,  1.0f, 0.0f,
-		-1.0f,  1.0f,  0.0f, 1.0f
-	};
 
 	float ground[] = {
 		// Positions          // Texture Coords // normals
@@ -103,20 +88,6 @@ int main()
 	    10.0f, -0.5f, -10.0f,    10.0f, 10.0f,    0.0f, 1.0f, 0.0f,
 	     10.0f,  -0.5f, 10.0f,    10.0f, 0.0f,    0.0f, 1.0f, 0.0f
 	};
-
-	unsigned int rectVAO, rectVBO;
-	glGenVertexArrays(1, &rectVAO);
-	glGenBuffers(1, &rectVBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, rectVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices, GL_STATIC_DRAW);
-
-	glBindVertexArray(rectVAO);
-
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-	glEnableVertexAttribArray(1);
 
 	
 	// creation of ground
@@ -145,7 +116,7 @@ int main()
 	objectShader.setMat4("projection", projection);
 
 	objectShader.setVec3("light.ambient", 0.07f, 0.07f, 0.07f);
-	objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
+	objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); 
 	objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 	objectShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
@@ -154,34 +125,9 @@ int main()
 	objectShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 	objectShader.setVec3("lightColor", 0.5f, 0.0f, 0.0f);
 	objectShader.setVec3("fogColor", .631f, 0.553f, 0.66f);
+	objectShader.setVec3("light.direction", 0.05f, -1.0f, -2.0f);
 
-	//Texture grassTexture("Recources/textures/grass.jpg", "grassTexture");
-	//grassTexture.load();
-	pixelationShader.use();
-	pixelationShader.setInt("screenTexture", 0);
 
-	GLuint framebuffer;
-	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-	unsigned int textureColorBuffer;
-	glGenTextures(1, &textureColorBuffer);
-	glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
-
-	unsigned int rbo;
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 640, 480);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureColorBuffer, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-	
 	while (!screen.shouldClose())
 	{
 		
@@ -190,15 +136,22 @@ int main()
 		lastFrame = currentFrame;
 
 		processInput();
+		if (wireframe) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+
 		glEnable(GL_DEPTH_TEST);
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		glViewport(0, 0, 640, 480);
+		glViewport(0, 0, screen.SCR_WIDTH, screen.SCR_HEIGHT);
 
 		screen.update();
-		
+
+	
 		
 		objectShader.use();
-		/*if (death)
+		if (death)
 		{
 			screen.setClearColor(0.341f, 0.024f, 0.024f, 1.0f);
 			objectShader.setVec3("fogColor", 0.341f, 0.024f, 0.024f);
@@ -207,10 +160,10 @@ int main()
 		{
 			screen.setClearColor(.631f, 0.553f, 0.66f, 1.0f);
 			objectShader.setVec3("fogColor", .631f, 0.553f, 0.66f);
-		}*/
+		}
 
-			screen.setClearColor(0.98f, 0.839f, 0.647f, 1.0f);
-			objectShader.setVec3("fogColor", 0.271f, 0.329f, 0.235f);
+	//	screen.setClearColor(0.98f, 0.839f, 0.647f, 1.0f);
+	//	objectShader.setVec3("fogColor", 0.271f, 0.329f, 0.235f);
 		
 
 		glm::mat4 view = camera.GetViewMatrix();
@@ -233,22 +186,7 @@ int main()
 		
 		objectShader.use();
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
-		glReadBuffer(GL_COLOR_ATTACHMENT0);
-		glViewport(0, 0, 1024, 768);
-		glBlitFramebuffer(
-			0, 0, 640, 480,
-			0, 0, screen.SCR_WIDTH, screen.SCR_HEIGHT,
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
-		pixelationShader.use();
-
-		glBindVertexArray(rectVAO);
-		glDisable(GL_DEPTH_TEST);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		//objectShader.setBool("enableSpecular", false);
 		//glm::mat4 model = glm::mat4(1.0f);
@@ -288,6 +226,16 @@ void processInput()
 			screen.setClearColor(0.5, 0.0, 0.0, 1.0);
 			lastToggleTime = currentTime;
 		}
+	} 
+	if (Keyboard::key(GLFW_KEY_T))
+	{
+		auto currentTime = std::chrono::steady_clock::now();
+		auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastToggleTime).count();
+		if (elapsedTime > 200) // Cooldown period: 200 milliseconds
+		{
+			wireframe = !wireframe;
+			lastToggleTime = currentTime;
+		}
 	}
 	const float cameraSpeed = 1.8f * deltaTime; // adjust accordingly
 	if (Keyboard::key(GLFW_KEY_W) == GLFW_PRESS)
@@ -301,6 +249,6 @@ void processInput()
 
 	if (Keyboard::key(GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, cameraSpeed);
-	if(true)
+	if(false)
 	camera.Position.y = 1.0f;
 }
